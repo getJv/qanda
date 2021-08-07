@@ -28,8 +28,6 @@ class InteractiveCommand extends Command
 The Interactive Q&A app
 ART;
 
-
-
     public function __construct()
     {
         parent::__construct();
@@ -101,20 +99,18 @@ ART;
             $cliMenu->close();
         };
     }
-
-
     private function mainMenu(){
         return [
             "Main Menu",
             [
-                "create" => ["Create","create"],
-                "list"   => "List all questions",
+                "createOption" => ["Create","createOption"],
+                "listMenu"     => ["List all questions","listOption"],
                 "stats"  => "Show stats",
                 "reset"  => "Reset answers",
             ]
         ];
     }
-    private function create($menu){
+    private function createOption($menu){
         return function (CliMenu $cliMenu) use ($menu){
             $questionTitle = $cliMenu->askText()
                 ->setValidator(function ($title) {
@@ -132,17 +128,24 @@ ART;
                 ->setValidationFailedText('Please, info the question answer')
                 ->ask();
 
-            ;
-            //$questionAnswer->fetch();
-            //$questionTitle->fetch();
-            $cliMenu->confirm('Question added!')
-                ->display('OK!');
+            $newQuestion = $this->user->questions()->create([
+                "title" => $questionTitle->fetch(),
+                "answer"   => $questionAnswer->fetch()
+            ]);
 
-            $menu->setResult('welcome');
+            $message = is_null($newQuestion) ? "Error. Try again!" : 'Question added!';
+            $cliMenu->confirm($message)->display('OK!');
+            $menu->setResult('mainMenu');
             $cliMenu->close();
         };
     }
+    private function listOption($menu){
+        return function (CliMenu $cliMenu) use ($menu){
+            $menu->addLineBreak('*-',1);
+            $menu->redraw();
+        };
 
+    }
 
     private function render(){
 
@@ -163,7 +166,6 @@ ART;
             }
 
         }
-
         $menu->setForegroundColour('42','yellow');
         $menu->setBackgroundColour('90','black');
         $menu->setWidth(200);
@@ -186,13 +188,14 @@ ART;
     {
         while(true){
             $option = $this->render();
-
             if(!is_string($option)){
                 $this->info("Thank you for using " . strtolower($this->description) );
                 exit;
             }
             list($this->title,$this->items) = $this->$option();
-
        }
+
+
+
     }
 }

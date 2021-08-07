@@ -10,9 +10,9 @@
 4. Provide a README with: 
    - How to use instruction
    - External dependencies use justification
-5. Create a CLI interactive
-6. The command name should be: `qanda:interactive`
-7. Once started the main screen should list the following:
+5. ✅  Create a CLI interactive
+6. ✅  The command name should be: `qanda:interactive`
+7. ✅  Once started the main screen should list the following:
    ```
    1. Create a question 
    2. List all questions
@@ -21,7 +21,7 @@
    5. Reset
    6. Exit
    ```
-8. About `Create a question`:
+8. ✅  About `Create a question`:
    - prompt to give a question and the only answer to that question.
    - Both the question and the answer should be stored in the database.
     
