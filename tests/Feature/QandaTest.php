@@ -20,34 +20,24 @@ class QandaTest extends TestCase
      */
     private $output;
 
-    public function setUp() : void
-    {
-        $this->output = new BufferedOutput;
-        $this->terminal = $this->createMock(Terminal::class);
 
-        /*$this->terminal->expects($this->any())
-            ->method('isInteractive')
-            ->willReturn(true);
-
-        $this->terminal->expects($this->any())
-            ->method('getWidth')
-            ->willReturn(48);
-
-        $this->terminal->expects($this->any())
-            ->method('write')
-            ->will($this->returnCallback(function ($buffer) {
-                $this->output->write($buffer);
-            }));*/
-    }
 
     /** @test */
     public function tt(){
 
-        $this->artisan('qanda:interactive');
-            //->expectsQuestion('What is your name?', 'Taylor Otwell')
-           // ->expectsQuestion('Which language do you prefer?', 'PHP');
-            //->expectsOutput('Your name is Taylor Otwell and you prefer PHP.')
-            //->doesntExpectOutput('Your name is Taylor Otwell and you prefer Ruby.')
-            //->assertExitCode(0);
+        $this->artisan('qanda:interactive')
+            ->expectsQuestion('What is your name?', 'Taylor Otwell')
+            ->expectsQuestion('Which language do you prefer?', 'PHP')
+            ->expectsOutput('Your name is Taylor Otwell and you prefer PHP.')
+            ->doesntExpectOutput('Your name is Taylor Otwell and you prefer Ruby.')
+            ->expectsConfirmation('Do you really wish to run this command?', 'no')
+            ->expectsTable([
+                    'ID',
+                    'Email',
+                ], [
+                    [1, 'taylor@example.com'],
+                    [2, 'abigail@example.com'],
+                ])
+            ->assertExitCode(1);
     }
 }

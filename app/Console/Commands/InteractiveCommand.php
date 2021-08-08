@@ -186,16 +186,33 @@ ART;
     }
     public function handle()
     {
-        while(true){
+       /* while(true){
             $option = $this->render();
             if(!is_string($option)){
                 $this->info("Thank you for using " . strtolower($this->description) );
                 exit;
             }
             list($this->title,$this->items) = $this->$option();
-       }
+       }*/
+        $name = $this->ask('What is your name?');
 
+        $language = $this->choice('Which language do you prefer?', [
+            'PHP',
+            'Ruby',
+            'Python',
+        ]);
 
+        $this->line('Your name is '.$name.' and you prefer '.$language.'.');
+
+        $name = $this->ask('Do you really wish to run this command?');
+
+        $this->table(
+            ['ID', 'Email'],
+            [
+                [1, 'taylor@example.com'],
+                [2, 'abigail@example.com'],
+            ]
+        );
 
     }
 }
