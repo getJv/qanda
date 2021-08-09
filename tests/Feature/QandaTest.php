@@ -102,9 +102,9 @@ class QandaTest extends TestCase
         $this->selectMainMenuStep($cmd,$user,"List all questions");
         list($header,$rows) = $this->generateTitle('List of questions',$user);
         $cmd->expectsTable($header,$rows);
-        $header =  ['ID', 'Question',"Answer","Last answer"];
-        $rows = $user->listOfQuestions();
-        $cmd->expectsTable($header,$rows);
+        $headers =  ['Question',"Answer"];
+        list(,$rows) = $user->listOfQuestionAndAnswers();
+        $cmd->expectsTable($headers,$rows);
         $cmd->expectsQuestion('Select an option', 'Exit');
         $this->exitStep($cmd);
     }
@@ -123,8 +123,8 @@ class QandaTest extends TestCase
         $this->selectMainMenuStep($cmd,$user,"Practice");
         list($header,$rows) = $this->generateTitle('Practice Session',$user);
         $cmd->expectsTable($header,$rows);
-        $header =  ['ID', 'Question',"Answer","Last answer"];
-        $rows = $user->listOfQuestions();
+        $header =  ['ID', 'Question',"Last answer"];
+        list(,$rows) = $user->listOfQuestionAndStats();
         $separator = new TableSeparator;
         list($message) = $user->questionStats();
         $footer = [new TableCell($message, ['colspan' => 4])];

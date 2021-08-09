@@ -22,14 +22,14 @@
    6. Exit
    ```
 8. ✅  About `Create a question`:
-   - prompt to give a question and the only answer to that question.
-   - Both the question and the answer should be stored in the database.
+   - ✅  prompt to give a question and the only answer to that question.
+   - ✅  Both the question and the answer should be stored in the database.
     
 9. ✅  About `List all questions`:
     - shows table listing all the created questions with the correct answer.
 
-10. About `Pratice`:
-    - Shows a table listing all questions, and their practice status for each question:
+10. ✅  About `Pratice`:
+    - ✅  Shows a table listing all questions, and their practice status for each question:
       Not answered, Correct, Incorrect.
     - ✅  Table footer, should present the % of completion (all questions vs correctly answered).
     - ✅  The user should select the desired question.
@@ -50,9 +50,11 @@
     - ✅  Persisted in a SQL database.
     - ✅  Allow multiple users.
     - Clean code solutions are better
-    - Test!!
+    - ✅  Test!!
 
 ## Dependencies
+
+- No dependencies, Only Laravel features
 
 ## How to run
 

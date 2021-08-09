@@ -50,6 +50,13 @@ class InteractiveCommand extends Command
         $nextMethod = $next['method'];
         $this->$nextMethod();
     }
+    private function generateContextMenu(){
+        $menuOption = [
+            ['method' => 'mainMenu', 'title' =>'Go to main menu'],
+        ];
+        $answer = $this->generateChoiceQuestion('Select an option',$menuOption);
+        $this->callNextMenu($menuOption,$answer);
+    }
     private function exit(){
         $this->user = null;
         $this->info("Thank you for use our app!");
@@ -89,25 +96,13 @@ class InteractiveCommand extends Command
             $this->line('Question created!');
 
         }
-        $menuOption = [
-            ['method' => 'create', 'title' =>'Create another question'],
-            ['method' => 'mainMenu', 'title' =>'Main menu'],
-        ];
-        $answer = $this->generateChoiceQuestion('Select an option',$menuOption);
-        $this->callNextMenu($menuOption,$answer);
+        $this->generateContextMenu();
     }
     private function list(){
         $this->generateTitle("List of questions");
-
-        $this->table(
-            ['ID', 'Question',"Answer","Last answer"],
-            $this->user->listOfQuestions()
-        );
-        $menuOption = [
-            ['method' => 'mainMenu', 'title' =>'Go to main menu'],
-        ];
-        $answer = $this->generateChoiceQuestion('Select an option',$menuOption);
-        $this->callNextMenu($menuOption,$answer);
+        list($headers,$rows) = $this->user->listOfQuestionAndAnswers();
+        $this->table($headers,$rows);
+        $this->generateContextMenu();
     }
     private function stats(){
         $this->generateTitle("Stats and Score");
@@ -127,11 +122,7 @@ class InteractiveCommand extends Command
                 ['Summary' ,  $message],
             ]
         );
-        $menuOption = [
-            ['method' => 'mainMenu', 'title' =>'Go to main menu'],
-        ];
-        $answer = $this->generateChoiceQuestion($menuOption);
-        $this->callNextMenu($menuOption,$answer);
+        $this->generateContextMenu();
     }
     private function reset(){
         $this->generateTitle("Reset answers operation");
@@ -140,28 +131,20 @@ class InteractiveCommand extends Command
           $this->user->questions->each->update(['last_answer' => null]);
           $this->line('Answers were erased!');
         }
-        $menuOption = [
-            ['method' => 'mainMenu', 'title' =>'Go to main menu'],
-        ];
-        $answer = $this->generateChoiceQuestion('Select an option',$menuOption);
-        $this->callNextMenu($menuOption,$answer);
+        $this->generateContextMenu();
 
 
     }
-    private function practice($sequence = 0){
+    private function practice(){
         $this->generateTitle("Practice Session");
 
         $separator = new TableSeparator;
         list($message) = $this->user->questionStats();
         $footer = [new TableCell($message, ['colspan' => 4])];
-        $lines = $this->user->fresh()->listOfQuestions();
-        array_push($lines,$separator);
-        array_push($lines,$footer);
-        $this->table(
-            ['ID', 'Question',"Answer","Last answer"],
-            $lines
-        );
-
+        list($headers,$rows) = $this->user->listOfQuestionAndStats();
+        array_push($rows,$separator);
+        array_push($rows,$footer);
+        $this->table($headers,$rows);
         $chosen = intval($this->ask("Type the question ID"));
         $questions = $this->user->questions;
         $mustExistRuleFail = function () use ($questions,$chosen){
@@ -175,7 +158,6 @@ class InteractiveCommand extends Command
         $mustBeIntegerRuleFail = function () use ($questions,$chosen){
             return $chosen < 1; // intval returns 0 when converts a not number
         };
-
         if( $mustBeIntegerRuleFail() || $mustExistRuleFail() ||  $cantPickCorrectOneRuleFail() ){
             $this->line("Invalid option. Try again");
         }else{
@@ -190,16 +172,8 @@ class InteractiveCommand extends Command
             }else{
                 $this->line('You answered is incorrect!');
             }
-
-
         }
-        $menuOption = [
-            ['method' => 'mainMenu', 'title' =>'Go to main menu'],
-        ];
-        $answer = $this->generateChoiceQuestion('Select an option',$menuOption);
-        $this->callNextMenu($menuOption,$answer);
-
-
+        $this->generateContextMenu();
     }
     public function handle()
     {
