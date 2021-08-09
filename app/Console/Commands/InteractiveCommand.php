@@ -21,7 +21,7 @@ class InteractiveCommand extends Command
     private $user  = null;
 
     private function generateTitle($title){
-        system('clear');
+        //system('clear');
         $user = is_null($this->user) ? '' : $this->user->name;
         $this->table(
             ['Screen', 'Current User'],
@@ -30,17 +30,17 @@ class InteractiveCommand extends Command
             ]
         );
     }
-    private function generateChoiceQuestion($menuOptions){
+    private function generateChoiceQuestion($title,$menuOptions){
         $menuOptions[99] = ['method' => 'exit', 'title' => 'Exit'];
         $extractOption = function ($item){
             return  $item['title'];
         };
         $options = array_map($extractOption,$menuOptions);
-        return $this->choice('Please pick one option',$options);
+        return $this->choice($title,$options);
 
     }
     private function callNextMenu($menuOption,$option){
-
+        $menuOption[99] = ['method' => 'exit', 'title' => 'Exit'];
         $extractMethod = function ($item) use($option){
             return  $item['title'] === $option;
         };
@@ -53,15 +53,19 @@ class InteractiveCommand extends Command
     private function exit(){
         $this->user = null;
         $this->info("Thank you for use our app!");
-        exit;
+
     }
     private function ignition(){
         $this->generateTitle('Welcome to QAnda Interactive app');
         $options = User::listOfUsers();
-        $ans = $this->generateChoiceQuestion($options);
+        $ans = $this->generateChoiceQuestion('Select an user',$options);
         $this->user = User::where('name',$ans)->first();
-        if(is_null($this->user)) $this->exit();
-        $this->mainMenu();
+        if(is_null($this->user)) {
+            $this->exit();
+        }else{
+            $this->mainMenu();
+        }
+
 
     }
     private function mainMenu(){
@@ -73,7 +77,7 @@ class InteractiveCommand extends Command
             ['method' => 'stats', 'title' =>'Stats'],
             ['method' => 'reset', 'title' =>'Reset'],
         ];
-        $answer = $this->generateChoiceQuestion($menuOption);
+        $answer = $this->generateChoiceQuestion('Select an option',$menuOption);
         $this->callNextMenu($menuOption,$answer);
     }
     private function create(){
@@ -81,13 +85,15 @@ class InteractiveCommand extends Command
         $questionTitle = $this->ask("What is the question title?");
         $questionAnswer = $this->ask("What is the question answer?");
         $newQuestion = $this->user->questions()->create(['title' => $questionTitle, 'answer' => $questionAnswer]);
-        $message = is_null($newQuestion) ? "We got an Error" : "Operation complete";
-        $this->info($message);
+        if(!is_null($newQuestion)){
+            $this->line('Question created!');
+
+        }
         $menuOption = [
             ['method' => 'create', 'title' =>'Create another question'],
-            ['method' => 'mainMenu', 'title' =>'Go to main menu'],
+            ['method' => 'mainMenu', 'title' =>'Main menu'],
         ];
-        $answer = $this->generateChoiceQuestion($menuOption);
+        $answer = $this->generateChoiceQuestion('Select an option',$menuOption);
         $this->callNextMenu($menuOption,$answer);
     }
     private function list(){
