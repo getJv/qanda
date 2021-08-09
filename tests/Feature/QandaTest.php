@@ -6,6 +6,8 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use PhpSchool\Terminal\IO\BufferedOutput;
 use PhpSchool\Terminal\Terminal;
+use Symfony\Component\Console\Helper\TableCell;
+use Symfony\Component\Console\Helper\TableSeparator;
 use Tests\TestCase;
 use App\Models\User;
 use App\Models\Question;
@@ -93,14 +95,61 @@ class QandaTest extends TestCase
         $this->createQuestionStep($cmd,$user,'Exit',$questionTitle,$questionAnswer);
         $this->exitStep($cmd);
     }
-
     /** @test */
     public function should_list_questions(){
         $selectedUser = 'Jhonatan';
-        $questionTitle = 'What is you favorite color?';
-        $questionAnswer = 'Green';
         list ($cmd,$user) = $this->selectUserStep($selectedUser);
-        $this->selectMainMenuStep($cmd,$user,"Create a question");
-        $this->createQuestionStep($cmd,$user,'Main menu',$questionTitle,$questionAnswer);
+        $this->selectMainMenuStep($cmd,$user,"List all questions");
+        list($header,$rows) = $this->generateTitle('List of questions',$user);
+        $cmd->expectsTable($header,$rows);
+        $header =  ['ID', 'Question',"Answer","Last answer"];
+        $rows = $user->listOfQuestions();
+        $cmd->expectsTable($header,$rows);
+        $cmd->expectsQuestion('Select an option', 'Exit');
+        $this->exitStep($cmd);
+    }
+    /** @test */
+    public function should_practice_questions(){
+
+        /**
+         * TODO This test is compete and suppose to be working. BUT
+         * the issue: https://github.com/laravel/framework/issues/35805
+         * indicates we had a issue with expectsTable when use recursive calls.
+         * Please, Investigate and provide solution if possible.
+         */
+
+        $selectedUser = 'Jhonatan';
+        list ($cmd,$user) = $this->selectUserStep($selectedUser);
+        $this->selectMainMenuStep($cmd,$user,"Practice");
+        list($header,$rows) = $this->generateTitle('Practice Session',$user);
+        $cmd->expectsTable($header,$rows);
+        $header =  ['ID', 'Question',"Answer","Last answer"];
+        $rows = $user->listOfQuestions();
+        $separator = new TableSeparator;
+        list($message) = $user->questionStats();
+        $footer = [new TableCell($message, ['colspan' => 4])];
+        array_push($rows,$separator);
+        array_push($rows,$footer);
+        $cmd->expectsTable($header,$rows);
+        $selectedQuestionId = $rows[0][0];
+        $selectedQuestionTitle = $rows[0][1];
+        $selectedQuestionAnswer = $rows[0][2];
+        $cmd->expectsQuestion('Type the question ID', $selectedQuestionId);
+        $cmd->expectsQuestion($selectedQuestionTitle, $selectedQuestionAnswer);
+        $cmd->expectsOutput('You answered is correct!');
+        $cmd->expectsQuestion('Select an option', 'Exit');
+        $this->exitStep($cmd);
+    }
+    /** @test */
+    public function should_clear_questions_answers(){
+        $selectedUser = 'Jhonatan';
+        list ($cmd,$user) = $this->selectUserStep($selectedUser);
+        $this->selectMainMenuStep($cmd,$user,"Reset");
+        list($header,$rows) = $this->generateTitle('Reset answers operation',$user);
+        $cmd->expectsTable($header,$rows);
+        $cmd->expectsConfirmation('Are you sure you want reset your answers? (irreversible!)', 'yes');
+        $cmd->expectsOutput('Answers were erased!');
+        $cmd->expectsQuestion('Select an option', 'Exit');
+        $this->exitStep($cmd);
     }
 }

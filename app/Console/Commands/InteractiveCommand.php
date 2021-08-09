@@ -97,7 +97,7 @@ class InteractiveCommand extends Command
         $this->callNextMenu($menuOption,$answer);
     }
     private function list(){
-        $this->generateTitle("List of Questions");
+        $this->generateTitle("List of questions");
 
         $this->table(
             ['ID', 'Question',"Answer","Last answer"],
@@ -106,7 +106,7 @@ class InteractiveCommand extends Command
         $menuOption = [
             ['method' => 'mainMenu', 'title' =>'Go to main menu'],
         ];
-        $answer = $this->generateChoiceQuestion($menuOption);
+        $answer = $this->generateChoiceQuestion('Select an option',$menuOption);
         $this->callNextMenu($menuOption,$answer);
     }
     private function stats(){
@@ -135,29 +135,34 @@ class InteractiveCommand extends Command
     }
     private function reset(){
         $this->generateTitle("Reset answers operation");
-        $confirmed = $this->confirm('Are you sure you want rest your answers?');
+        $confirmed = $this->confirm('Are you sure you want reset your answers? (irreversible!)');
         if ($confirmed){
           $this->user->questions->each->update(['last_answer' => null]);
+          $this->line('Answers were erased!');
         }
-        $this->mainMenu();
+        $menuOption = [
+            ['method' => 'mainMenu', 'title' =>'Go to main menu'],
+        ];
+        $answer = $this->generateChoiceQuestion('Select an option',$menuOption);
+        $this->callNextMenu($menuOption,$answer);
 
 
     }
-    private function practice(){
+    private function practice($sequence = 0){
         $this->generateTitle("Practice Session");
 
         $separator = new TableSeparator;
         list($message) = $this->user->questionStats();
-        $footerHeader = [new TableCell($message, ['colspan' => 4])];
+        $footer = [new TableCell($message, ['colspan' => 4])];
         $lines = $this->user->fresh()->listOfQuestions();
         array_push($lines,$separator);
-        array_push($lines,$footerHeader);
+        array_push($lines,$footer);
         $this->table(
             ['ID', 'Question',"Answer","Last answer"],
             $lines
         );
 
-        $chosen = intval($this->ask("Choose a question using his ID, or type 99 to Main Menu."));
+        $chosen = intval($this->ask("Type the question ID"));
         $questions = $this->user->questions;
         $mustExistRuleFail = function () use ($questions,$chosen){
             $obj = $questions->first(function($item) use ($chosen){ return $item->id === $chosen; });
@@ -171,42 +176,33 @@ class InteractiveCommand extends Command
             return $chosen < 1; // intval returns 0 when converts a not number
         };
 
-        if ($chosen === 99){
-            $this->mainMenu();
-        }elseif( $mustBeIntegerRuleFail() || $mustExistRuleFail() ||  $cantPickCorrectOneRuleFail() ){
+        if( $mustBeIntegerRuleFail() || $mustExistRuleFail() ||  $cantPickCorrectOneRuleFail() ){
             $this->line("Invalid option. Try again");
-            $this->practice();
         }else{
             $question = Question::find($chosen);
             $answer = $this->ask($question->title);
-
+            $result = ($answer === $question->answer) ? 'C' : 'W';
             $question->update([
-                'last_answer' => ($answer === $question->answer) ? 'C' : 'W'
+                'last_answer' => $result
             ]);
+            if($result === 'C'){
+                $this->line('You answered is correct!');
+            }else{
+                $this->line('You answered is incorrect!');
+            }
 
-            $this->practice();
+
         }
+        $menuOption = [
+            ['method' => 'mainMenu', 'title' =>'Go to main menu'],
+        ];
+        $answer = $this->generateChoiceQuestion('Select an option',$menuOption);
+        $this->callNextMenu($menuOption,$answer);
 
 
     }
     public function handle()
     {
-
         $this->ignition();
-
-
-
-        //$this->line('Your name is '.$name.' and you prefer '.$language.'.');
-
-        //$name = $this->ask('Do you really wish to run this command?');
-
-        /*$this->table(
-            ['ID', 'Email'],
-            [
-                [1, 'taylor@example.com'],
-                [2, 'abigail@example.com'],
-            ]
-        );*/
-
     }
 }
