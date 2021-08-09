@@ -12,6 +12,7 @@ class Question extends Model
     protected $fillable = [
         'title',
         'answer',
+        'last_answer'
     ];
 
 }

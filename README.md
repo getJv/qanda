@@ -25,30 +25,30 @@
    - prompt to give a question and the only answer to that question.
    - Both the question and the answer should be stored in the database.
     
-9. About `List all questions`:
+9. ✅  About `List all questions`:
     - shows table listing all the created questions with the correct answer.
 
 10. About `Pratice`:
     - Shows a table listing all questions, and their practice status for each question:
       Not answered, Correct, Incorrect.
-    - Table footer, should present the % of completion (all questions vs correctly answered).
-    - The user should select the desired question.
-    - Once flagged as correct the question can't be selected.
-    - Upon answering, we store it and print correct/incorrect.
-    - After store the answer and display the result the user should go back to `Pratice` screen
+    - ✅  Table footer, should present the % of completion (all questions vs correctly answered).
+    - ✅  The user should select the desired question.
+    - ✅  Once flagged as correct the question can't be selected.
+    - ✅  Upon answering, we store it and print correct/incorrect.
+    - ✅  After store the answer and display the result the user should go back to `Pratice` screen
 
-11. About `Stats`: 
-    - Shows The total amount of questions.
-    - % of questions that have an answer.
-    - % of questions that have a correct answer.
+11. ✅  About `Stats`: 
+    - ✅  Shows The total amount of questions.
+    - ✅  % of questions that have an answer.
+    - ✅  % of questions that have a correct answer.
 
-12. About `Reset`:
-    - erase all practice progress and allow a fresh start.
+12. ✅  About `Reset`:
+    - ✅  erase all practice progress and allow a fresh start.
     
 13. General Notes:
-    - Perform any validations you deem necessary.
-    - Persisted in a SQL database.
-    - Allow multiple users.
+    - ✅  Perform any validations you deem necessary.
+    - ✅  Persisted in a SQL database.
+    - ✅  Allow multiple users.
     - Clean code solutions are better
     - Test!!
 
