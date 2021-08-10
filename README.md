@@ -10,8 +10,21 @@
 
 1. Checkout the project from git: `git clone https://github.com/getJv/qanda.git`
 2. Go into project folder. `aka.: qanda`
-3. Just execute: `sh qanda-bigbang.sh`
+3. execute one of the following action: 
+   * `sh qanda-bigbang.sh` - to execute all steps in once
+   *  To execute directly on you favorite terminal:
+   ```
+     docker-compose up -d && docker exec --user 1000 backend composer install && docker exec -it backend php artisan qanda:interactive  
+   ```
 4. Enjoy!
+
+### Useful commands:
+* `docker exec -it backend bash` To go into the container
+* Once inside you can run:
+   * `php artisan test --filter=QandaTest` to check the tests
+   * `php artisan qanda:interactive` to execute the app in a clean window
+   * `php artisan qanda:interactive --sequential` to execute in a verbose mode. 
+
 
 ### Important notes
  

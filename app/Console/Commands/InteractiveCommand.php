@@ -7,7 +7,7 @@ use App\Models\User;
 
 class InteractiveCommand extends Command
 {
-    protected $signature = 'qanda:interactive';
+    protected $signature = 'qanda:interactive {--sequential}';
     protected $description = 'The Interactive Q&A app.';
     private $user  = null;
 
@@ -28,7 +28,9 @@ class InteractiveCommand extends Command
         return  $this->user;
     }
     public function generateTitle($title){
-        //system('clear');
+        if(!$this->option('sequential')){
+            system('clear');
+        }
         $name = is_null($this->user) ? '' : $this->user->name;
         $this->table(
             ['Screen', 'Current User'],
