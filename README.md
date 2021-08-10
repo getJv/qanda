@@ -14,8 +14,9 @@
    * `sh qanda-bigbang.sh` - to execute all steps in once
    *  To execute directly on you favorite terminal:
    ```
-     docker-compose up -d && docker exec --user 1000 backend composer install && docker exec -it backend php artisan qanda:interactive  
+     docker-compose up -d && docker exec --user 1000 backend composer install && docker exec backend php artisan migrate --seed && docker exec -it backend php artisan qanda:interactive  
    ```
+   _Please, remember to waiting some seconds to database container started._
 4. Enjoy!
 
 ### Useful commands:
@@ -24,6 +25,7 @@
    * `php artisan test --filter=QandaTest` to check the tests
    * `php artisan qanda:interactive` to execute the app in a clean window
    * `php artisan qanda:interactive --sequential` to execute in a verbose mode. 
+   * `php artisan migrate:fresh --seed` to reset and reload the whole database
 
 
 ### Important notes
@@ -36,7 +38,7 @@
 ## Test Requirements checklist
 
 1. ✅ Private git repo
-2. Once finished share it with users: `SamuelNorbury` and `juampi92`
+2. ✅  Once finished share it with users: `SamuelNorbury` and `juampi92`
 3. ✅  Provide a docker-compose file or use sail
 4. ✅  Provide a README with: 
    - ✅  How to use instruction

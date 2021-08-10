@@ -72,7 +72,6 @@ class User extends Authenticatable
             $rows[] = [
                 $question->id,
                 $question->title,
-                $question->answer,
                 $statusText($question->last_answer)
             ];
         }

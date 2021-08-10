@@ -3,9 +3,6 @@
 namespace Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
-use PhpSchool\Terminal\IO\BufferedOutput;
-use PhpSchool\Terminal\Terminal;
 use Symfony\Component\Console\Helper\TableCell;
 use Symfony\Component\Console\Helper\TableSeparator;
 use Tests\TestCase;
@@ -15,8 +12,6 @@ use App\Models\Question;
 class QandaTest extends TestCase
 {
     use RefreshDatabase;
-
-
 
     protected function setUp(): void
     {
@@ -34,7 +29,7 @@ class QandaTest extends TestCase
 
     private function selectUserStep($chosen): array
     {
-        $cmd = $this->artisan('qanda:interactive');
+        $cmd = $this->artisan('qanda:interactive --sequential');
         list($header,$rows) = $this->generateTitle('Welcome to QAnda Interactive app');
         $cmd->expectsTable($header,$rows);
         $cmd->expectsQuestion('Select an user', $chosen);
@@ -64,19 +59,6 @@ class QandaTest extends TestCase
     public function should_exit_from_load_user_screen(){
         list($cmd) = $this->selectUserStep('Exit'); // 99 -> Exit
         $this->exitStep($cmd);
-            /*->expectsQuestion('What is your name?', 'Taylor Otwell')
-            ->expectsQuestion('Which language do you prefer?', 'PHP')
-            ->expectsOutput('Your name is Taylor Otwell and you prefer PHP.')
-            ->doesntExpectOutput('Your name is Taylor Otwell and you prefer Ruby.')
-            ->expectsConfirmation('Do you really wish to run this command?', 'no')
-            ->expectsTable([
-                    'ID',
-                    'Email',
-                ], [
-                    [1, 'taylor@example.com'],
-                    [2, 'abigail@example.com'],
-                ])
-            ->assertExitCode(1);*/
     }
     /** @test */
     public function should_exit_from_main_menu_screen(){
@@ -127,13 +109,14 @@ class QandaTest extends TestCase
         list(,$rows) = $user->listOfQuestionAndStats();
         $separator = new TableSeparator;
         list($message) = $user->questionStats();
-        $footer = [new TableCell($message, ['colspan' => 4])];
+        $footer = [new TableCell($message, ['colspan' => 3])];
         array_push($rows,$separator);
         array_push($rows,$footer);
         $cmd->expectsTable($header,$rows);
         $selectedQuestionId = $rows[0][0];
-        $selectedQuestionTitle = $rows[0][1];
-        $selectedQuestionAnswer = $rows[0][2];
+        $question = Question::find($selectedQuestionId);
+        $selectedQuestionTitle = $question->title;
+        $selectedQuestionAnswer = $question->answer;
         $cmd->expectsQuestion('Type the question ID', $selectedQuestionId);
         $cmd->expectsQuestion($selectedQuestionTitle, $selectedQuestionAnswer);
         $cmd->expectsOutput('You answered is correct!');

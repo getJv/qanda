@@ -16,8 +16,8 @@ class PracticeMenu extends AbstractMenuItem
         $this->cmd->generateTitle($this->title);
         $separator = new TableSeparator;
         list($message) = $this->user->questionStats();
-        $footer = [new TableCell($message, ['colspan' => 4])];
-        list($headers,$rows) = $this->user->listOfQuestionAndStats();
+        $footer = [new TableCell($message, ['colspan' => 3])];
+        list($headers,$rows) = $this->user->fresh()->listOfQuestionAndStats();
         array_push($rows,$separator);
         array_push($rows,$footer);
         $this->cmd->table($headers,$rows);
@@ -35,7 +35,7 @@ class PracticeMenu extends AbstractMenuItem
             return $chosen < 1; // intval returns 0 when converts a not number
         };
         if( $mustBeIntegerRuleFail() || $mustExistRuleFail() ||  $cantPickCorrectOneRuleFail() ){
-            $this->line("Invalid option. Try again");
+            $this->cmd->line("Invalid option. Try again");
         }else{
             $question = Question::find($chosen);
             $answer = $this->cmd->ask($question->title);

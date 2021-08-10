@@ -10,7 +10,7 @@ class ListMenu extends AbstractMenuItem
 
     protected function execute(){
         $this->cmd->generateTitle($this->title);
-        list($headers,$rows) = $this->user->listOfQuestionAndAnswers();
+        list($headers,$rows) = $this->user->fresh()->listOfQuestionAndAnswers();
         $this->cmd->table($headers,$rows);
         $this->cmd->generateContextMenu();
     }
