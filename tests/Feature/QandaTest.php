@@ -141,6 +141,30 @@ class QandaTest extends TestCase
         $this->exitStep($cmd);
     }
     /** @test */
+    public function should_show_user_stats(){
+        $selectedUser = 'Jhonatan';
+        list ($cmd,$user) = $this->selectUserStep($selectedUser);
+        $this->selectMainMenuStep($cmd,$user,"Stats");
+        list($header,$rows) = $this->generateTitle('Stats and Score',$user);
+        $cmd->expectsTable($header,$rows);
+        $headers =  ['Key',"Description"];
+        list($message,
+            $totalOfQuestion,
+            $totalOfCorrectAnswers,
+            $totalOfInCorrectAnswers,
+            $totalOfNotAnswers
+            ) = $user->questionStats();
+        $cmd->expectsTable($headers,[
+            ['Number of questions',  $totalOfQuestion],
+            ['Correct answers'   ,  $totalOfCorrectAnswers],
+            ['Incorrect answers' ,  $totalOfInCorrectAnswers],
+            ['Not answers' ,  $totalOfNotAnswers],
+            ['Summary' ,  $message],
+        ]);
+        $cmd->expectsQuestion('Select an option', 'Exit');
+        $this->exitStep($cmd);
+    }
+    /** @test */
     public function should_clear_questions_answers(){
         $selectedUser = 'Jhonatan';
         list ($cmd,$user) = $this->selectUserStep($selectedUser);
