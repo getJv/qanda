@@ -9,7 +9,7 @@
 ## How to run
 
 1. Checkout the project from git: `git clone https://github.com/getJv/qanda.git`
-2. Go into project folder. `aka.: qanda`
+2. Go into project folder. `cd qanda`
 3. execute one of the following action: 
    * `sh qanda-bigbang.sh` - to execute all steps in once
    *  To execute directly on you favorite terminal:
