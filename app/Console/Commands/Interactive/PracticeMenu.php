@@ -8,6 +8,7 @@ use Symfony\Component\Console\Helper\TableCell;
 use Symfony\Component\Console\Helper\TableSeparator;
 
 
+
 class PracticeMenu extends AbstractMenuItem
 {
     protected $title = "Practice Session";
@@ -17,7 +18,7 @@ class PracticeMenu extends AbstractMenuItem
         $separator = new TableSeparator;
         list($message) = $this->user->questionStats();
         $footer = [new TableCell($message, ['colspan' => 3])];
-        list($headers,$rows) = $this->user->fresh()->listOfQuestionAndStats();
+        list($headers,$rows) = $this->listOfQuestionAndStats();
         array_push($rows,$separator);
         array_push($rows,$footer);
         $this->cmd->table($headers,$rows);
@@ -51,4 +52,34 @@ class PracticeMenu extends AbstractMenuItem
         }
         $this->cmd->generateContextMenu();
     }
+
+    /**
+     * Provide a list of questions and stats
+     * in table format for Qanda command
+     *
+     * @return array
+     */
+    public function listOfQuestionAndStats(){
+
+        $headers = ['ID', 'Question',"Last answer"];
+        $statusText = function($value){
+            $text = "Not answered";
+            if($value === 'C'){
+                $text = "Correct";
+            }else if($value === 'W'){
+                $text = "Incorrect";
+            }
+            return $text;
+        };
+        $rows = [];
+        foreach ($this->user->questions->fresh() as $question){
+            $rows[] = [
+                $question->id,
+                $question->title,
+                $statusText($question->last_answer)
+            ];
+        }
+        return [$headers,$rows];
+    }
+
 }

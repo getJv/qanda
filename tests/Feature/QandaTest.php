@@ -85,7 +85,13 @@ class QandaTest extends TestCase
         list($header,$rows) = $this->generateTitle('List of questions',$user);
         $cmd->expectsTable($header,$rows);
         $headers =  ['Question',"Answer"];
-        list(,$rows) = $user->listOfQuestionAndAnswers();
+        $rows = [];
+        foreach ($user->questions->fresh() as $question){
+            $rows[] = [
+                $question->title,
+                $question->answer,
+            ];
+        }
         $cmd->expectsTable($headers,$rows);
         $cmd->expectsQuestion('Select an option', 'Exit');
         $this->exitStep($cmd);
@@ -106,7 +112,23 @@ class QandaTest extends TestCase
         list($header,$rows) = $this->generateTitle('Practice Session',$user);
         $cmd->expectsTable($header,$rows);
         $header =  ['ID', 'Question',"Last answer"];
-        list(,$rows) = $user->listOfQuestionAndStats();
+        $statusText = function($value){
+            $text = "Not answered";
+            if($value === 'C'){
+                $text = "Correct";
+            }else if($value === 'W'){
+                $text = "Incorrect";
+            }
+            return $text;
+        };
+        $rows = [];
+        foreach ($user->questions->fresh() as $question){
+            $rows[] = [
+                $question->id,
+                $question->title,
+                $statusText($question->last_answer)
+            ];
+        }
         $separator = new TableSeparator;
         list($message) = $user->questionStats();
         $footer = [new TableCell($message, ['colspan' => 3])];

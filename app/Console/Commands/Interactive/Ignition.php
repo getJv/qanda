@@ -11,8 +11,12 @@ class Ignition extends AbstractMenuItem
 
     public function execute(){
         $this->cmd->generateTitle($this->title);
-        $options = User::listOfUsers();
-        $ans = $this->cmd->generateChoiceQuestion('Select an user',$options);
+        $users = User::all();
+        $userList = [];
+        foreach ($users as $user){
+            $userList[] = ["method" => '', 'title' => $user->name ];
+        }
+        $ans = $this->cmd->generateChoiceQuestion('Select an user',$userList);
         $user = User::where('name',$ans)->first();
         if(is_null($user)) {
             new ExitMenu($this->cmd);
