@@ -37,7 +37,7 @@ class QandaTest extends TestCase
         return [$cmd,$user];
 }
     private function exitStep($cmd){
-        $cmd->expectsOutput('Thank you for use our app!');
+        $cmd->expectsOutput('Thank you for using our app!');
         $cmd->assertExitCode(0);
     }
     private function selectMainMenuStep($cmd,$user,$chosen){

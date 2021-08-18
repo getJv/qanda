@@ -5,7 +5,7 @@ services:
     image: getjv/php-apache
     restart: always
     ports:
-      - "80:80"
+      - "8888:80"
     volumes:
       - .:/var/www/html
     environment:
@@ -19,7 +19,7 @@ services:
     image: getjv/mysql
     restart: always
     ports:
-      - "3306:3306"
+      - "3307:3306"
     environment:
       - MYSQL_DATABASE=qanda
       - MYSQL_ROOT_PASSWORD=mysql
