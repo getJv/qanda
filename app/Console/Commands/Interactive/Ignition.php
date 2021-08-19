@@ -9,14 +9,19 @@ class Ignition extends AbstractMenuItem
 {
     protected $title = "Welcome to QAnda Interactive app";
 
-    public function execute(){
-        $this->cmd->generateTitle($this->title);
+    public function register(){
         $users = User::all();
         $userList = [];
         foreach ($users as $user){
             $userList[] = ["method" => '', 'title' => $user->name ];
         }
-        $ans = $this->cmd->generateChoiceQuestion('Select an user',$userList);
+        $this->cmd->menuRegister('UserList',$userList );
+    }
+
+    public function execute(){
+        $this->register();
+        $this->cmd->generateTitle($this->title);
+        $ans = $this->cmd->generateChoiceQuestion('Select an user','UserList');
         $user = User::where('name',$ans)->first();
         if(is_null($user)) {
             new ExitMenu($this->cmd);
@@ -25,4 +30,8 @@ class Ignition extends AbstractMenuItem
             new MainMenu($this->cmd);
         }
     }
+
+
+
+
 }

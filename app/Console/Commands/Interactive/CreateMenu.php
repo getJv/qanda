@@ -6,6 +6,10 @@ use App\Models\User;
 
 class CreateMenu extends AbstractMenuItem
 {
+    public function register(){
+
+    }
+
     protected $title = "Create Question";
 
     protected function execute(){
@@ -16,6 +20,6 @@ class CreateMenu extends AbstractMenuItem
         if(!is_null($newQuestion)){
             $this->cmd->line('Question created!');
         }
-        $this->cmd->generateContextMenu();
+        $this->cmd->next();
     }
 }

@@ -8,16 +8,22 @@ class MainMenu extends AbstractMenuItem
 {
     protected $title = "Main Menu";
 
-    public function execute(){
-        $this->cmd->generateTitle($this->title);
-        $menuOption = [
+    protected function register(){
+        $this->cmd->menuRegister('MainMenu', [
             ['method' => 'CreateMenu', 'title' =>'Create a question'],
             ['method' => 'ListMenu', 'title' =>'List all questions'],
             ['method' => 'PracticeMenu', 'title' =>'Practice'],
             ['method' => 'StatsMenu', 'title' =>'Stats'],
             ['method' => 'ResetMenu', 'title' =>'Reset'],
-        ];
-        $answer = $this->cmd->generateChoiceQuestion('Select an option',$menuOption);
-        $this->cmd->callNextMenu($menuOption,$answer);
+        ]);
     }
+
+    public function execute(){
+        $this->register();
+        $this->cmd->generateTitle($this->title);
+        $answer = $this->cmd->generateChoiceQuestion('Select an option','MainMenu');
+        $this->cmd->next('MainMenu',$answer);
+    }
+
+
 }

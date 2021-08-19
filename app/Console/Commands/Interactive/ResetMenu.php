@@ -8,6 +8,10 @@ class ResetMenu extends AbstractMenuItem
 {
     protected $title = "Reset answers operation";
 
+    protected function register(){
+
+    }
+
     protected function execute(){
         $this->cmd->generateTitle($this->title);
         $confirmed = $this->cmd->confirm('Are you sure you want reset your answers? (irreversible!)');
@@ -15,6 +19,6 @@ class ResetMenu extends AbstractMenuItem
             $this->user->questions->each->update(['last_answer' => null]);
             $this->cmd->line('Answers were erased!');
         }
-        $this->cmd->generateContextMenu();
+        $this->cmd->next();
     }
 }

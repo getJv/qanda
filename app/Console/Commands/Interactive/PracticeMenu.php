@@ -13,6 +13,10 @@ class PracticeMenu extends AbstractMenuItem
 {
     protected $title = "Practice Session";
 
+    protected function register(){
+
+    }
+
     protected function execute(){
         $this->cmd->generateTitle($this->title);
         $separator = new TableSeparator;
@@ -50,7 +54,7 @@ class PracticeMenu extends AbstractMenuItem
                 $this->cmd->line('You answered is incorrect!');
             }
         }
-        $this->cmd->generateContextMenu();
+        $this->cmd->next();
     }
 
     /**
@@ -59,7 +63,7 @@ class PracticeMenu extends AbstractMenuItem
      *
      * @return array
      */
-    public function listOfQuestionAndStats(){
+    private function listOfQuestionAndStats(){
 
         $headers = ['ID', 'Question',"Last answer"];
         $statusText = function($value){

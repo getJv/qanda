@@ -8,6 +8,10 @@ class StatsMenu extends AbstractMenuItem
 {
     protected $title = "Stats and Score";
 
+    protected function register(){
+
+    }
+
     protected function execute(){
         $this->cmd->generateTitle($this->title);
         list($message,
@@ -26,6 +30,6 @@ class StatsMenu extends AbstractMenuItem
                 ['Summary' ,  $message],
             ]
         );
-        $this->cmd->generateContextMenu();
+        $this->cmd->next();
     }
 }

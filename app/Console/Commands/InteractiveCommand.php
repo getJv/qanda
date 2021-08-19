@@ -11,7 +11,7 @@ class InteractiveCommand extends Command
     protected $description = 'The Interactive Q&A app.';
     private $user  = null;
 
-    private  $menuPipe = [
+    private  $screenPipe = [
             'ExitMenu' => 'App\Console\Commands\Interactive\ExitMenu',
             'MainMenu' => 'App\Console\Commands\Interactive\MainMenu',
             'CreateMenu' => 'App\Console\Commands\Interactive\CreateMenu',
@@ -20,7 +20,11 @@ class InteractiveCommand extends Command
             'StatsMenu' => 'App\Console\Commands\Interactive\StatsMenu',
             'ResetMenu' => 'App\Console\Commands\Interactive\ResetMenu',
     ];
-
+    private  $menuMapper = [];
+    public function menuRegister($group,$options){
+        $this->menuMapper[$group] = $options;
+        $this->menuMapper[$group][99] = ['method' => 'ExitMenu', 'title' => 'Exit'];
+    }
     public function setUser(User $user){
         $this->user = $user;
     }
@@ -39,36 +43,41 @@ class InteractiveCommand extends Command
             ]
         );
     }
-    public function generateChoiceQuestion($title,$menuOptions){
-        $menuOptions[99] = ['method' => 'exit', 'title' => 'Exit'];
-        $extractOption = function ($item){
+    public function generateChoiceQuestion($title,$menuGroup){
+
+        $extractTitleForOptions = function ($item){
             return  $item['title'];
         };
-        $options = array_map($extractOption,$menuOptions);
+        $options = array_map($extractTitleForOptions,$this->menuMapper[$menuGroup]);
         return $this->choice($title,$options);
-
     }
-    public function callNextMenu($menuOption,$option){
-        $menuOption[99] = ['method' => 'ExitMenu', 'title' => 'Exit'];
-        $extractMethod = function ($item) use($option){
-            return  $item['title'] === $option;
-        };
+    public function next($caller = null,$option = null){
 
-        $next = array_filter($menuOption,$extractMethod);
-        $next = array_pop($next);
-        $nextMenu = $this->menuPipe[$next['method']];
+        if(is_null($caller)){
+            $answer = $this->generateChoiceQuestion('Select an option','contextMenu');
+            $this->next('contextMenu',$answer);
+        }else{
 
-        new $nextMenu($this,$this->user);
-    }
-    public function generateContextMenu(){
-        $menuOption = [
-            ['method' => 'MainMenu', 'title' =>'Go to main menu'],
-        ];
-        $answer = $this->generateChoiceQuestion('Select an option',$menuOption);
-        $this->callNextMenu($menuOption,$answer);
+            $menus =  array_filter($this->menuMapper[$caller],function($item) use ($option){
+                    return $item['title'] === $option;
+            });
+
+            if($option === 'Exit')
+                $className =  'ExitMenu';
+            else{
+                $menu = array_shift($menus);
+                $className = $menu['method'];
+            }
+
+            $nextMenu = $this->screenPipe[$className];
+            new $nextMenu($this,$this->user);
+        }
     }
     public function handle()
     {
+       $this->menuRegister('contextMenu', [
+           ['method' => 'MainMenu', 'title' =>'Go to main menu'],
+       ]);
         new Ignition($this,$this->user);
     }
 }

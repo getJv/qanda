@@ -8,11 +8,15 @@ class ListMenu extends AbstractMenuItem
 {
     protected $title = "List of questions";
 
+    protected function register(){
+
+    }
+
     protected function execute(){
         $this->cmd->generateTitle($this->title);
         list($headers,$rows) = $this->listOfQuestionAndAnswers();
         $this->cmd->table($headers,$rows);
-        $this->cmd->generateContextMenu();
+        $this->cmd->next();
     }
 
     /**
@@ -21,7 +25,7 @@ class ListMenu extends AbstractMenuItem
      *
      * @return array
      */
-    public function listOfQuestionAndAnswers(): array
+    private function listOfQuestionAndAnswers(): array
     {
 
         $headers = ['Question',"Answer"];

@@ -14,8 +14,18 @@ abstract class AbstractMenuItem
     {
         $this->cmd = $cmd;
         $this->user = $cmd->getUser();
+        $this->register();
         $this->execute();
     }
 
+    /**
+     * Should register the menu options when needed
+     * @return mixed
+     */
+    protected abstract function register();
+    /**
+     * Should execute the Menu Screen needs
+     * @return mixed
+     */
     protected abstract function execute();
 }
